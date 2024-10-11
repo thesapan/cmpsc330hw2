@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -187,26 +188,45 @@ int checkAndMarkBox(char** board, int row, int col, char player, bool isHorizont
 
 
 int main(int argc, char* argv[]) {
-    // File input
-//    string filename = "C:\\Users\\sapan\\CLionProjects\\330-2\\input.txt";
-    string filename = argv[1];
-    ifstream inputFile(filename);
-
-    if (!inputFile.is_open()) {
-        cerr << "Error: Unable to open file " << filename << endl;
+    if (argc < 2) {
+        cerr << "No input file provided" << endl;
+        cerr << "Usage: dotsandboxes /path/to/input.txt" << endl;
         return 1;
     }
 
+    // File input
+//    string filename = "C:\\Users\\sapan\\CLionProjects\\330-2\\input.txt";
+    char *filename = argv[1];
+    FILE *inp = fopen(filename,"r");
+    //    ifstream inputFile(filename);
+
+    if (!inp) {
+        cerr << "File not found" << endl;
+        return 1;
+    }
+
+    fseek(inp, 0L, SEEK_END);
+    const long sz = ftell(inp);
+    fseek(inp, 0L, SEEK_SET);
+
+    char *fileInpPtr = static_cast<char *>(malloc(sz + 1 * sizeof(char)));
+    fileInpPtr[sz] = '\0';
+
+    for (int i = 0; i < sz; ++i) {
+        fscanf(inp, "%c", &fileInpPtr[i]);
+    }
+    istringstream iss(fileInpPtr);
+
     // Read grid size (number of rows and columns of boxes)
     int rows, cols;
-    inputFile >> rows >> cols;
+    iss >> rows >> cols;
 
     Move* moves = NULL;  // Linked list of moves
     PlayerNode* players = NULL;  // Linked list of players
 
     char player;
     int row, col;
-    while (inputFile >> player >> row >> col) {
+    while (iss >> player >> row >> col) {
         if (player == 'E') break;
 
         // Add player to the list if not already present
@@ -217,9 +237,6 @@ int main(int argc, char* argv[]) {
         // Add move to the list
         addMove(moves, player, row, col);
     }
-
-    inputFile.close();
-
     // Create the board
     char** board = createBoard(rows, cols);
     bool gameOver = false;  // Flag to track if the game should stop
@@ -319,6 +336,8 @@ int main(int argc, char* argv[]) {
         current = current->next;
         delete temp;
     }
+
+    fclose(inp);
 
     return 0;
 }
