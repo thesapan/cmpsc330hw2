@@ -8,18 +8,18 @@ using namespace std;
 struct Move {
     char player;
     int row, col;
-    Move* next;
+    Move *next;
 };
 
 struct PlayerNode {
     char player;
     int boxes;
-    PlayerNode* next;
+    PlayerNode *next;
 };
 
 // Function to create and initialize the board with dots
-char** createBoard(int rows, int cols) {
-    char** board = new char*[2 * rows + 1];
+char **createBoard(int rows, int cols) {
+    char **board = new char *[2 * rows + 1];
     for (int i = 0; i < 2 * rows + 1; i++) {
         board[i] = new char[2 * cols + 1];
         for (int j = 0; j < 2 * cols + 1; j++) {
@@ -34,12 +34,16 @@ char** createBoard(int rows, int cols) {
 }
 
 // Function to add a move to the linked list
-void addMove(Move*& head, char player, int row, int col) {
-    Move* newMove = new Move{player, row, col, NULL};
+void addMove(Move *&head, char player, int row, int col) {
+    Move *newMove = static_cast<Move *>(malloc(sizeof(Move)));
+    newMove->player = player;
+    newMove->row = row;
+    newMove->col = col;
+
     if (head == NULL) {
         head = newMove;
     } else {
-        Move* temp = head;
+        Move *temp = head;
         while (temp->next != NULL) {
             temp = temp->next;
         }
@@ -48,12 +52,15 @@ void addMove(Move*& head, char player, int row, int col) {
 }
 
 // Function to add a player to the linked list
-void addPlayer(PlayerNode*& head, char player) {
-    PlayerNode* newPlayer = new PlayerNode{player, 0, NULL};
+void addPlayer(PlayerNode *&head, char player) {
+    PlayerNode *newPlayer = static_cast<PlayerNode *>(malloc(sizeof(PlayerNode)));
+    newPlayer->player = player;
+    newPlayer->boxes = 0;
+
     if (head == NULL) {
         head = newPlayer;
     } else {
-        PlayerNode* temp = head;
+        PlayerNode *temp = head;
         while (temp->next != NULL) {
             temp = temp->next;
         }
@@ -62,8 +69,8 @@ void addPlayer(PlayerNode*& head, char player) {
 }
 
 // Function to find a player in the linked list
-PlayerNode* findPlayer(PlayerNode* head, char player) {
-    PlayerNode* temp = head;
+PlayerNode *findPlayer(PlayerNode *head, char player) {
+    PlayerNode *temp = head;
     while (temp != NULL) {
         if (temp->player == player) {
             return temp;
@@ -74,7 +81,7 @@ PlayerNode* findPlayer(PlayerNode* head, char player) {
 }
 
 // Function to print the board
-void printBoard(char** board, int rows, int cols) {
+void printBoard(char **board, int rows, int cols) {
     cout << "    ";  // Space for row numbers
     for (int col = 0; col < cols * 2 - 1; ++col) {
         if (!(col % 10)) {
@@ -96,14 +103,14 @@ void printBoard(char** board, int rows, int cols) {
 
     // Print the board with row numbers
     for (int row = 0; row < rows * 2 - 1; ++row) {
-        if(row/10 > 9) {
+        if (row / 10 > 9) {
             if (row % 10 == 0) {
                 cout << row / 10;
             } else {
                 cout << "  ";
             }
         } else {
-            cout<<" ";
+            cout << " ";
             if (row % 10 == 0) {
                 cout << row / 10;
             } else {
@@ -119,7 +126,7 @@ void printBoard(char** board, int rows, int cols) {
 }
 
 // Function to place horizontal or vertical lines with lowercase initials (b for B, r for R)
-bool placeLine(char** board, int row, int col, char player, bool isHorizontal) {
+bool placeLine(char **board, int row, int col, char player, bool isHorizontal) {
     char line = tolower(player);
     if (isHorizontal) {
         if (board[2 * row][2 * col + 1] != ' ') {
@@ -139,7 +146,7 @@ bool placeLine(char** board, int row, int col, char player, bool isHorizontal) {
 
 // Function to check if a box is completed after placing a line
 // Updated function to check if a box is completed after placing a line
-int checkAndMarkBox(char** board, int row, int col, char player, bool isHorizontal, int rows, int cols) {
+int checkAndMarkBox(char **board, int row, int col, char player, bool isHorizontal, int rows, int cols) {
     int completedBoxes = 0;
 
     if (isHorizontal) {
@@ -188,7 +195,7 @@ int checkAndMarkBox(char** board, int row, int col, char player, bool isHorizont
 }
 
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     if (argc < 2) {
         cerr << "No input file provided" << endl;
         cerr << "Usage: dotsandboxes /path/to/input.txt" << endl;
@@ -198,7 +205,7 @@ int main(int argc, char* argv[]) {
     // File input
 //    string filename = "C:\\Users\\sapan\\CLionProjects\\330-2\\input.txt";
     char *filename = argv[1];
-    FILE *inp = fopen(filename,"r");
+    FILE *inp = fopen(filename, "r");
     //    ifstream inputFile(filename);
 
     if (!inp) {
@@ -222,8 +229,8 @@ int main(int argc, char* argv[]) {
     int rows, cols;
     iss >> rows >> cols;
 
-    Move* moves = NULL;  // Linked list of moves
-    PlayerNode* players = NULL;  // Linked list of players
+    Move *moves = NULL;  // Linked list of moves
+    PlayerNode *players = NULL;  // Linked list of players
 
     char player;
     int row, col;
@@ -239,18 +246,16 @@ int main(int argc, char* argv[]) {
         addMove(moves, player, row, col);
     }
     // Create the board
-    char** board = createBoard(rows, cols);
-    bool gameOver = false;  // Flag to track if the game should stop
+    char **board = createBoard(rows, cols);
     char playerWithIllegalMove = '\0'; // Track the player who made the illegal move
 
     // Process each move
-    Move* currentMove = moves;
+    Move *currentMove = moves;
     while (currentMove != NULL) {
-        PlayerNode* currentPlayer = findPlayer(players, currentMove->player);
+        PlayerNode *currentPlayer = findPlayer(players, currentMove->player);
 
-        if ((currentMove->col&1) == (currentMove->row&1)) {
+        if ((currentMove->col & 1) == (currentMove->row & 1)) {
             playerWithIllegalMove = currentMove->player; // Mark the player with the illegal move
-            gameOver = true;
             board[currentMove->row][currentMove->col] = 'X'; // Mark invalid move
             break;
         }
@@ -258,12 +263,12 @@ int main(int argc, char* argv[]) {
         bool isHorizontal = currentMove->row % 2 == 0;
         if (!placeLine(board, currentMove->row / 2, currentMove->col / 2, currentMove->player, isHorizontal)) {
             playerWithIllegalMove = currentMove->player; // Mark the player with the illegal move
-            gameOver = true;
             break;
         }
 
         // Check how many boxes were completed
-        int boxesCompleted = checkAndMarkBox(board, currentMove->row / 2, currentMove->col / 2, currentMove->player, isHorizontal, rows, cols);
+        int boxesCompleted = checkAndMarkBox(board, currentMove->row / 2, currentMove->col / 2, currentMove->player,
+                                             isHorizontal, rows, cols);
 
         // Update the player's box count
         if (boxesCompleted > 0) {
@@ -283,7 +288,7 @@ int main(int argc, char* argv[]) {
     int numPlayersWithMaxBoxes = 0;  // Variable to track the number of players with the max number of boxes
 
     // Find the player with the most boxes and check for ties, excluding the player with the illegal move
-    PlayerNode* tempPlayer = players;
+    PlayerNode *tempPlayer = players;
     while (tempPlayer != NULL) {
         if (tempPlayer->player != playerWithIllegalMove) {  // Exclude the player with the illegal move
             if (tempPlayer->boxes > maxBoxes) {
@@ -321,7 +326,7 @@ int main(int argc, char* argv[]) {
 
     // Clean up memory for linked lists and board
     while (moves != NULL) {
-        Move* temp = moves;
+        Move *temp = moves;
         moves = moves->next;
         delete temp;
     }
@@ -331,9 +336,9 @@ int main(int argc, char* argv[]) {
     }
     delete[] board;
 
-    PlayerNode* current = players;
+    PlayerNode *current = players;
     while (current != NULL) {
-        PlayerNode* temp = current;
+        PlayerNode *temp = current;
         current = current->next;
         delete temp;
     }
