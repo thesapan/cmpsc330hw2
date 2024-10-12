@@ -195,6 +195,35 @@ int checkAndMarkBox(char **board, int row, int col, char player, bool isHorizont
 }
 
 
+void sortPlayers(PlayerNode *&head) {
+    if (!head || !head->next) {
+        return;
+    }
+
+    PlayerNode *sorted = NULL;
+    PlayerNode *current = head;
+
+    while (current) {
+        PlayerNode *next = current->next;
+        if (!sorted || sorted->player >= current->player) {
+            current->next = sorted;
+            sorted = current;
+        } else {
+            PlayerNode *temp = sorted;
+            while (temp->next && temp->next->player < current->player) {
+                temp = temp->next;
+            }
+            current->next = temp->next;
+            temp->next = current;
+        }
+        current = next;
+    }
+
+    head = sorted;
+}
+
+
+
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         cerr << "No input file provided" << endl;
@@ -308,6 +337,7 @@ int main(int argc, char *argv[]) {
     } else if (numPlayersWithMaxBoxes == 1 && playerWithIllegalMove != '\0') {
         tie = false;  // Only one valid player has the most boxes, they win
     }
+    sortPlayers(players);
 
     // Print the final results
     tempPlayer = players;
