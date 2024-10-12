@@ -62,13 +62,13 @@ void addMove(Move *&head, char player, int row, int col) {
     newMove->player = player;
     newMove->row = row;
     newMove->col = col;
-    newMove->next = nullptr;
+    newMove->next = NULL;
 
-    if (head == nullptr) {
+    if (head == NULL) {
         head = newMove;
     } else {
         Move *temp = head;
-        while (temp->next != nullptr) {
+        while (temp->next != NULL) {
             temp = temp->next;
         }
         temp->next = newMove;
@@ -81,13 +81,13 @@ void addPlayer(PlayerNode *&head, char player) {
     PlayerNode *newPlayer = static_cast<PlayerNode *>(malloc(sizeof(PlayerNode)));
     newPlayer->player = player;
     newPlayer->boxes = 0; // Initialize box count
-    newPlayer->next = nullptr;
+    newPlayer->next = NULL;
 
-    if (head == nullptr) {
+    if (head == NULL) {
         head = newPlayer;
     } else {
         PlayerNode *temp = head;
-        while (temp->next != nullptr) {
+        while (temp->next != NULL) {
             temp = temp->next;
         }
         temp->next = newPlayer;
@@ -98,34 +98,32 @@ void addPlayer(PlayerNode *&head, char player) {
 PlayerNode *findPlayer(PlayerNode *head, char player) {
     // Search for the player in the linked list and return the pointer
     PlayerNode *temp = head;
-    while (temp != nullptr) {
+    while (temp != NULL) {
         if (temp->player == player) {
             return temp;
         }
         temp = temp->next;
     }
-    return nullptr; // Return null if player not found
+    return NULL; // Return null if player not found
 }
 
 // Function to print the board
 void printBoard(char **board, int rows, int cols) {
     // Print the tens and ones places of the column numbers
-    cout << "    ";  // Space for row numbers
+    cout << "   ";  // Space for row numbers
     for (int col = 0; col < cols * 2 - 1; ++col) {
         if (!(col % 10)) {
             cout << col / 10; // Tens place of column numbers
         } else {
             cout << " ";  // For spaces between dots
         }
-        cout << flush;
     }
     cout << endl;
 
     // Print the ones place of the column numbers
-    cout << "    ";  // Space for row numbers
+    cout << "   ";  // Space for row numbers
     for (int col = 0; col < cols * 2 - 1; ++col) {
         cout << (col) % 10;  // Print ones place
-        cout << flush;
     }
     cout << endl;
 
@@ -136,10 +134,9 @@ void printBoard(char **board, int rows, int cols) {
             if (row % 10 == 0) {
                 cout << row / 10;
             } else {
-                cout << "  ";
+                cout << " ";
             }
         } else {
-            cout << " ";
             if (row % 10 == 0) {
                 cout << row / 10;
             } else {
@@ -232,7 +229,7 @@ void sortPlayers(PlayerNode *&head) {
         return;
     }
 
-    PlayerNode *sorted = nullptr;
+    PlayerNode *sorted = NULL;
     PlayerNode *current = head;
 
     while (current) {
@@ -287,8 +284,8 @@ int main(int argc, char *argv[]) {
     int rows, cols;
     iss >> rows >> cols;
 
-    Move *moves = nullptr;  // Linked list of moves
-    PlayerNode *players = nullptr;  // Linked list of players
+    Move *moves = NULL;  // Linked list of moves
+    PlayerNode *players = NULL;  // Linked list of players
 
     // Read and process the moves from the input file
     char player;
@@ -297,7 +294,7 @@ int main(int argc, char *argv[]) {
         if (player == 'E') break;
 
         // Add player to the list if not already present
-        if (findPlayer(players, player) == nullptr) {
+        if (findPlayer(players, player) == NULL) {
             addPlayer(players, player);
         }
 
@@ -311,7 +308,7 @@ int main(int argc, char *argv[]) {
 
     // Process each move
     Move *currentMove = moves;
-    while (currentMove != nullptr) {
+    while (currentMove != NULL) {
         PlayerNode *currentPlayer = findPlayer(players, currentMove->player);
 
         // Check for invalid move (if the move is placed in an invalid position)
@@ -351,7 +348,7 @@ int main(int argc, char *argv[]) {
 
     // Find the player with the most boxes and check for ties, excluding the player with the illegal move
     PlayerNode *tempPlayer = players;
-    while (tempPlayer != nullptr) {
+    while (tempPlayer != NULL) {
         if (tempPlayer->player != playerWithIllegalMove) {  // Exclude the player with the illegal move
             if (tempPlayer->boxes > maxBoxes) {
                 winner = tempPlayer->player;
@@ -376,7 +373,7 @@ int main(int argc, char *argv[]) {
 
     // Print the final results
     tempPlayer = players;
-    while (tempPlayer != nullptr) {
+    while (tempPlayer != NULL) {
         cout << "Player " << tempPlayer->player << " has " << tempPlayer->boxes << " boxes";
         if (tempPlayer->player != playerWithIllegalMove) {
             if (tie && tempPlayer->boxes == maxBoxes) {
@@ -390,7 +387,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Clean up memory for linked lists and board
-    while (moves != nullptr) {
+    while (moves != NULL) {
         Move *temp = moves;
         moves = moves->next;
         delete temp;
@@ -402,7 +399,7 @@ int main(int argc, char *argv[]) {
     delete[] board;
 
     PlayerNode *current = players;
-    while (current != nullptr) {
+    while (current != NULL) {
         PlayerNode *temp = current;
         current = current->next;
         delete temp;
