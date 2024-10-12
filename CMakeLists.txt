@@ -3,4 +3,4 @@ project(330_2)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(330_2 main.cpp)
+add_executable(330_2 dotsandboxes.cxx)
