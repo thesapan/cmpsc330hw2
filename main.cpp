@@ -232,27 +232,26 @@ int main(int argc, char *argv[]) {
     }
 
     // File input
-//    string filename = "C:\\Users\\sapan\\CLionProjects\\330-2\\input.txt";
     char *filename = argv[1];
-    FILE *inp = fopen(filename, "r");
+    FILE *file = fopen(filename, "r");
     //    ifstream inputFile(filename);
 
-    if (!inp) {
+    if (!file) {
         cerr << "File not found" << endl;
         return 1;
     }
 
-    fseek(inp, 0L, SEEK_END);
-    const long sz = ftell(inp);
-    fseek(inp, 0L, SEEK_SET);
+    fseek(file, 0L, SEEK_END);
+    const long sz = ftell(file);
+    fseek(file, 0L, SEEK_SET);
 
-    char *fileInpPtr = static_cast<char *>(malloc(sz + 1 * sizeof(char)));
-    fileInpPtr[sz] = '\0';
+    char *myStr = static_cast<char *>(malloc(sz + 1 * sizeof(char)));
+    myStr[sz] = '\0';
 
     for (int i = 0; i < sz; ++i) {
-        fscanf(inp, "%c", &fileInpPtr[i]);
+        fscanf(file, "%c", &myStr[i]);
     }
-    istringstream iss(fileInpPtr);
+    istringstream iss(myStr);
 
     // Read grid size (number of rows and columns of boxes)
     int rows, cols;
@@ -373,7 +372,7 @@ int main(int argc, char *argv[]) {
         delete temp;
     }
 
-    fclose(inp);
+    fclose(file);
 
     return 0;
 }
